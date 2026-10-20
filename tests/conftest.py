@@ -10,6 +10,7 @@ from sqlalchemy import text
 
 from app.core.db import Base, engine
 import app.modules.auth.models  # noqa: F401  (add new models imports here)
+import app.modules.profiles.models  # noqa: F401
 from app.main import app
 
 
