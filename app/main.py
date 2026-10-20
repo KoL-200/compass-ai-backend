@@ -6,7 +6,8 @@ from app.core.db import get_db
 from app.core.errors import register_error_handlers
 from app.modules.auth.router import router as auth_router
 from app.modules.auth.router import users_router
-
+from app.modules.opportunities.router import admin_router as opportunities_admin_router
+from app.modules.opportunities.router import router as opportunities_router
 from app.modules.profiles.router import router as profiles_router
 
 app = FastAPI(title="Compass AI", version="0.1.0")
@@ -15,6 +16,8 @@ register_error_handlers(app)
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(users_router, prefix="/api/v1")
 app.include_router(profiles_router, prefix="/api/v1")
+app.include_router(opportunities_router, prefix="/api/v1")
+app.include_router(opportunities_admin_router, prefix="/api/v1")
 
 
 @app.get("/health/live")

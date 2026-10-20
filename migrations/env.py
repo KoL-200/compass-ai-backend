@@ -11,6 +11,8 @@ import app.modules.auth.models  # noqa: F401
 
 import app.modules.profiles.models  # noqa: F401
 
+import app.modules.opportunities.models  # noqa: F401
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
