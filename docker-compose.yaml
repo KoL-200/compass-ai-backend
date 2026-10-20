@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: compass
+      POSTGRES_PASSWORD: compass
+      POSTGRES_DB: compass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U compass" ]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7
+
+  api:
+    build: .
+    env_file: .env
+    environment:
+      WATCHFILES_FORCE_POLLING: "true"
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/code
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
