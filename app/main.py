@@ -11,6 +11,8 @@ from app.modules.eligibility.router import router as eligibility_router
 from app.modules.opportunities.router import admin_router as opportunities_admin_router
 from app.modules.opportunities.router import router as opportunities_router
 from app.modules.profiles.router import router as profiles_router
+from app.modules.matching.router import router as matching_router
+from app.modules.applications.router import router as applications_router
 
 app = FastAPI(title="Compass AI", version="0.1.0")
 register_error_handlers(app)
@@ -22,6 +24,8 @@ app.include_router(opportunities_router, prefix="/api/v1")
 app.include_router(opportunities_admin_router, prefix="/api/v1")
 app.include_router(eligibility_router, prefix="/api/v1")
 app.include_router(eligibility_admin_router, prefix="/api/v1")
+app.include_router(matching_router, prefix="/api/v1")
+app.include_router(applications_router, prefix="/api/v1")
 
 
 @app.get("/health/live")

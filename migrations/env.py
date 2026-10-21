@@ -7,11 +7,15 @@ from alembic import context
 
 from app.core.config import get_settings
 from app.core.db import Base
-import app.modules.auth.models  # noqa: F401
+import app.modules.auth.models 
 
-import app.modules.profiles.models  # noqa: F401
+import app.modules.profiles.models 
 
-import app.modules.opportunities.models  # noqa: F401
+import app.modules.opportunities.models 
+
+import app.modules.matching.models
+
+import app.modules.applications.models
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

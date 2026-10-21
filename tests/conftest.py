@@ -9,9 +9,11 @@ from fastapi.testclient import TestClient
 from sqlalchemy import text
 
 from app.core.db import Base, engine
-import app.modules.auth.models  # noqa: F401  (add new models imports here)
-import app.modules.profiles.models  # noqa: F401
-import app.modules.opportunities.models  # noqa: F401
+import app.modules.auth.models
+import app.modules.profiles.models 
+import app.modules.opportunities.models 
+import app.modules.matching.models
+import app.modules.applications.models
 from app.main import app
 
 
