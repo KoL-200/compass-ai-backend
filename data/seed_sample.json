@@ -1,0 +1,535 @@
+{
+  "organizations": [
+    {
+      "key": "demo-uni",
+      "name": "Demo University of Technology (SAMPLE)",
+      "type": "university",
+      "country": "NG",
+      "website": "https://demo-uni.example.com"
+    },
+    {
+      "key": "demo-funder",
+      "name": "Demo Education Foundation (SAMPLE)",
+      "type": "funder",
+      "country": "NG",
+      "website": "https://demo-foundation.example.com"
+    },
+    {
+      "key": "demo-tech",
+      "name": "Demo Tech Ltd (SAMPLE)",
+      "type": "employer",
+      "country": "NG",
+      "website": "https://demo-tech.example.com"
+    }
+  ],
+  "sources": [
+    {
+      "key": "demo-uni-site",
+      "name": "Demo University sample page",
+      "url": "https://demo-uni.example.com/admissions",
+      "type": "manual_entry"
+    },
+    {
+      "key": "demo-funder-site",
+      "name": "Demo Foundation sample page",
+      "url": "https://demo-foundation.example.com/awards",
+      "type": "manual_entry"
+    },
+    {
+      "key": "demo-tech-site",
+      "name": "Demo Tech sample page",
+      "url": "https://demo-tech.example.com/careers",
+      "type": "manual_entry"
+    }
+  ],
+  "opportunities": [
+    {
+      "org": "demo-uni",
+      "source": "demo-uni-site",
+      "demo": true,
+      "body": {
+        "category": "admission",
+        "title": "BSc Computer Science (SAMPLE)",
+        "description": "SAMPLE DATA for testing. Not a real programme.",
+        "country": "NG",
+        "location": "Lagos",
+        "work_mode": "onsite",
+        "application_url": "https://demo-uni.example.com/apply",
+        "opens_at": "2026-09-01T00:00:00Z",
+        "deadline_at": "2027-03-31T23:59:00Z",
+        "status": "open",
+        "admission": {
+          "degree_type": "bachelor",
+          "duration_months": 48,
+          "tuition_amount": 1500,
+          "tuition_currency": "USD",
+          "entry_requirements_text": "SAMPLE: JAMB 200 or above, Mathematics and English, WAEC English at C6 or better."
+        }
+      },
+      "requirements": {
+        "type": "AND",
+        "children": [
+          {
+            "type": "LEAF",
+            "field": "education_level",
+            "op": "gte",
+            "value": "secondary"
+          },
+          {
+            "type": "LEAF",
+            "field": "qualification_score",
+            "qualification_type": "jamb",
+            "scale": 400,
+            "op": "gte",
+            "value": 200
+          },
+          {
+            "type": "LEAF",
+            "field": "subjects",
+            "op": "contains_all",
+            "value": [
+              "mathematics",
+              "english"
+            ]
+          },
+          {
+            "type": "LEAF",
+            "field": "subject_grade",
+            "subject": "english",
+            "grade_scale": "waec",
+            "op": "gte",
+            "value": "c6"
+          }
+        ]
+      }
+    },
+    {
+      "org": "demo-uni",
+      "source": "demo-uni-site",
+      "demo": true,
+      "body": {
+        "category": "admission",
+        "title": "BEng Civil Engineering (SAMPLE)",
+        "description": "SAMPLE DATA for testing. Not a real programme.",
+        "country": "NG",
+        "location": "Lagos",
+        "work_mode": "onsite",
+        "application_url": "https://demo-uni.example.com/apply",
+        "opens_at": "2026-09-01T00:00:00Z",
+        "deadline_at": "2027-03-31T23:59:00Z",
+        "status": "open",
+        "admission": {
+          "degree_type": "bachelor",
+          "duration_months": 60
+        }
+      },
+      "requirements": {
+        "type": "AND",
+        "children": [
+          {
+            "type": "LEAF",
+            "field": "qualification_score",
+            "qualification_type": "jamb",
+            "scale": 400,
+            "op": "gte",
+            "value": 220
+          },
+          {
+            "type": "LEAF",
+            "field": "subjects",
+            "op": "contains_all",
+            "value": [
+              "mathematics",
+              "physics"
+            ]
+          },
+          {
+            "type": "OR",
+            "label": "Strong mathematics evidence",
+            "children": [
+              {
+                "type": "LEAF",
+                "field": "subject_grade",
+                "subject": "mathematics",
+                "grade_scale": "waec",
+                "op": "gte",
+                "value": "b3"
+              },
+              {
+                "type": "LEAF",
+                "field": "qualification_score",
+                "qualification_type": "jamb",
+                "scale": 400,
+                "op": "gte",
+                "value": 280
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "org": "demo-uni",
+      "source": "demo-uni-site",
+      "demo": true,
+      "body": {
+        "category": "admission",
+        "title": "MSc Data Science (SAMPLE)",
+        "description": "SAMPLE DATA for testing. Not a real programme.",
+        "country": "NG",
+        "location": "Lagos",
+        "work_mode": "hybrid",
+        "application_url": "https://demo-uni.example.com/apply-masters",
+        "opens_at": "2026-09-01T00:00:00Z",
+        "deadline_at": "2027-05-31T23:59:00Z",
+        "status": "open",
+        "admission": {
+          "degree_type": "master",
+          "duration_months": 18
+        }
+      },
+      "requirements": {
+        "type": "AND",
+        "children": [
+          {
+            "type": "LEAF",
+            "field": "education_level",
+            "op": "gte",
+            "value": "bachelor"
+          },
+          {
+            "type": "LEAF",
+            "field": "field_of_study",
+            "op": "in",
+            "value": [
+              "computer science",
+              "mathematics",
+              "statistics",
+              "data science"
+            ]
+          },
+          {
+            "type": "LEAF",
+            "field": "skills",
+            "op": "contains_any",
+            "value": [
+              "python",
+              "r"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "org": "demo-funder",
+      "source": "demo-funder-site",
+      "demo": true,
+      "body": {
+        "category": "scholarship",
+        "title": "National Merit Scholarship (SAMPLE)",
+        "description": "SAMPLE DATA for testing. Not a real scholarship.",
+        "country": "NG",
+        "work_mode": "unknown",
+        "application_url": "https://demo-foundation.example.com/merit",
+        "opens_at": "2026-09-01T00:00:00Z",
+        "deadline_at": "2027-02-15T23:59:00Z",
+        "status": "open",
+        "scholarship": {
+          "funding_type": "full",
+          "coverage": [
+            "tuition",
+            "accommodation"
+          ],
+          "need_based": false,
+          "renewable": true,
+          "renewal_conditions": "SAMPLE: maintain a good academic standing."
+        }
+      },
+      "requirements": {
+        "type": "AND",
+        "children": [
+          {
+            "type": "LEAF",
+            "field": "nationality",
+            "op": "in",
+            "value": [
+              "NG"
+            ]
+          },
+          {
+            "type": "LEAF",
+            "field": "education_level",
+            "op": "gte",
+            "value": "secondary"
+          },
+          {
+            "type": "LEAF",
+            "field": "qualification_score",
+            "qualification_type": "jamb",
+            "scale": 400,
+            "op": "gte",
+            "value": 250
+          }
+        ]
+      }
+    },
+    {
+      "org": "demo-funder",
+      "source": "demo-funder-site",
+      "demo": true,
+      "body": {
+        "category": "scholarship",
+        "title": "Need-Based Bursary (SAMPLE)",
+        "description": "SAMPLE DATA for testing. Not a real scholarship.",
+        "country": "NG",
+        "work_mode": "unknown",
+        "application_url": "https://demo-foundation.example.com/bursary",
+        "opens_at": "2026-09-01T00:00:00Z",
+        "deadline_at": "2027-01-31T23:59:00Z",
+        "status": "open",
+        "scholarship": {
+          "funding_type": "partial",
+          "funding_amount": 500,
+          "funding_currency": "USD",
+          "coverage": [
+            "tuition"
+          ],
+          "need_based": true,
+          "renewable": false
+        }
+      },
+      "requirements": {
+        "type": "AND",
+        "children": [
+          {
+            "type": "LEAF",
+            "field": "needs_financial_aid",
+            "op": "eq",
+            "value": true
+          },
+          {
+            "type": "LEAF",
+            "field": "nationality",
+            "op": "in",
+            "value": [
+              "NG",
+              "GH"
+            ]
+          },
+          {
+            "type": "LEAF",
+            "field": "education_level",
+            "op": "gte",
+            "value": "secondary"
+          }
+        ]
+      }
+    },
+    {
+      "org": "demo-funder",
+      "source": "demo-funder-site",
+      "demo": true,
+      "body": {
+        "category": "scholarship",
+        "title": "Graduate Research Fellowship (SAMPLE)",
+        "description": "SAMPLE DATA for testing. Not a real scholarship.",
+        "country": "NG",
+        "work_mode": "unknown",
+        "application_url": "https://demo-foundation.example.com/fellowship",
+        "opens_at": "2026-09-01T00:00:00Z",
+        "deadline_at": "2027-04-30T23:59:00Z",
+        "status": "open",
+        "scholarship": {
+          "funding_type": "stipend",
+          "funding_amount": 1200,
+          "funding_currency": "USD",
+          "coverage": [
+            "living costs"
+          ]
+        }
+      },
+      "requirements": {
+        "type": "AND",
+        "children": [
+          {
+            "type": "LEAF",
+            "field": "education_level",
+            "op": "gte",
+            "value": "bachelor"
+          },
+          {
+            "type": "LEAF",
+            "field": "age",
+            "op": "lte",
+            "value": 35
+          },
+          {
+            "type": "LEAF",
+            "field": "field_of_study",
+            "op": "in",
+            "value": [
+              "engineering",
+              "computer science",
+              "physics",
+              "mathematics"
+            ]
+          },
+          {
+            "type": "LEAF",
+            "field": "graduation_year",
+            "op": "gte",
+            "value": 2015,
+            "needs_review": true,
+            "label": "Research proposal approved by the selection committee (manual check)"
+          }
+        ]
+      }
+    },
+    {
+      "org": "demo-tech",
+      "source": "demo-tech-site",
+      "demo": true,
+      "body": {
+        "category": "internship",
+        "title": "Software Engineering Intern (SAMPLE)",
+        "description": "SAMPLE DATA for testing. Not a real internship.",
+        "country": "NG",
+        "location": "Lagos",
+        "work_mode": "hybrid",
+        "application_url": "https://demo-tech.example.com/intern-swe",
+        "opens_at": "2026-10-01T00:00:00Z",
+        "deadline_at": "2026-12-15T23:59:00Z",
+        "status": "open",
+        "internship": {
+          "duration_weeks": 12,
+          "start_date": "2027-01-11",
+          "paid": true,
+          "compensation_amount": 150000,
+          "compensation_currency": "NGN",
+          "required_skills": [
+            "python",
+            "git"
+          ],
+          "min_experience_months": 0
+        }
+      },
+      "requirements": {
+        "type": "AND",
+        "children": [
+          {
+            "type": "LEAF",
+            "field": "skills",
+            "op": "contains_all",
+            "value": [
+              "python",
+              "git"
+            ]
+          },
+          {
+            "type": "LEAF",
+            "field": "education_level",
+            "op": "gte",
+            "value": "secondary"
+          }
+        ]
+      }
+    },
+    {
+      "org": "demo-tech",
+      "source": "demo-tech-site",
+      "demo": true,
+      "body": {
+        "category": "internship",
+        "title": "Data Analyst Intern (SAMPLE)",
+        "description": "SAMPLE DATA for testing. Not a real internship.",
+        "country": "NG",
+        "location": "Abuja",
+        "work_mode": "hybrid",
+        "application_url": "https://demo-tech.example.com/intern-data",
+        "opens_at": "2026-10-01T00:00:00Z",
+        "deadline_at": "2026-12-15T23:59:00Z",
+        "status": "open",
+        "internship": {
+          "duration_weeks": 10,
+          "start_date": "2027-01-11",
+          "paid": true,
+          "compensation_amount": 120000,
+          "compensation_currency": "NGN",
+          "required_skills": [
+            "sql",
+            "excel"
+          ],
+          "min_experience_months": 3
+        }
+      },
+      "requirements": {
+        "type": "AND",
+        "children": [
+          {
+            "type": "LEAF",
+            "field": "skills",
+            "op": "contains_all",
+            "value": [
+              "sql",
+              "excel"
+            ]
+          },
+          {
+            "type": "LEAF",
+            "field": "experience_months",
+            "op": "gte",
+            "value": 3
+          }
+        ]
+      }
+    },
+    {
+      "org": "demo-tech",
+      "source": "demo-tech-site",
+      "demo": true,
+      "body": {
+        "category": "internship",
+        "title": "Remote Content Marketing Intern (SAMPLE)",
+        "description": "SAMPLE DATA for testing. Not a real internship.",
+        "country": "NG",
+        "work_mode": "remote",
+        "application_url": "https://demo-tech.example.com/intern-content",
+        "opens_at": "2026-10-01T00:00:00Z",
+        "deadline_at": "2026-12-31T23:59:00Z",
+        "status": "open",
+        "internship": {
+          "duration_weeks": 8,
+          "paid": false,
+          "required_skills": [
+            "writing"
+          ],
+          "min_experience_months": 0
+        }
+      },
+      "requirements": {
+        "type": "AND",
+        "children": [
+          {
+            "type": "LEAF",
+            "field": "skills",
+            "op": "contains_any",
+            "value": [
+              "writing",
+              "social media"
+            ]
+          },
+          {
+            "type": "LEAF",
+            "field": "country",
+            "op": "in",
+            "value": [
+              "NG",
+              "GH",
+              "KE"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

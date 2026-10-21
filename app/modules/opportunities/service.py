@@ -166,6 +166,22 @@ def verify_opportunity(db: Session, opp_id: uuid.UUID) -> m.Opportunity:
     return _load(db, opp.id)
 
 
+def set_requirements(
+    db: Session, opp_id: uuid.UUID, requirements: dict | None
+) -> m.Opportunity:
+    opp = _load(db, opp_id)
+    if opp is None:
+        raise AppError(404, "not_found", "Opportunity not found")
+
+    opp.requirements = requirements
+    opp.requirements_version += 1
+    if opp.data_quality == "verified":
+        opp.data_quality = "needs_review"
+
+    db.commit()
+    return _load(db, opp.id)
+
+
 def get_opportunity(db: Session, opp_id: uuid.UUID, *, public: bool) -> m.Opportunity:
     opp = db.scalar(select(m.Opportunity).where(m.Opportunity.id == opp_id))
     hidden = opp is None or (public and opp.status not in ("open", "closed"))
