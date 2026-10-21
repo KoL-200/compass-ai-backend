@@ -2,6 +2,7 @@ import os
 
 # Force the test database, even if .env points at the dev one.
 os.environ["DATABASE_URL"] = "postgresql+psycopg://compass:compass@db:5432/compass_test"
+os.environ["JOB_SECRET"] = "test-job-secret-not-for-production"
 os.environ.setdefault("JWT_SECRET", "test-secret-not-for-production-use-1234")
 
 import pytest
@@ -14,6 +15,7 @@ import app.modules.profiles.models
 import app.modules.opportunities.models 
 import app.modules.matching.models
 import app.modules.applications.models
+import app.modules.notifications.models
 from app.main import app
 
 

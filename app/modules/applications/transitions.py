@@ -24,5 +24,5 @@ TRANSITIONS: dict[str, frozenset[str]] = {
     "rejected": frozenset(),
     "withdrawn": frozenset(),
     # Only reachable again if the deadline was extended (checked in the service).
-    "expired": frozenset({"interested", "preparing"}),
+    "expired": frozenset({"interested", "preparing", "submitted"}),
 }

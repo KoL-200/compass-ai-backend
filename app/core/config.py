@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     access_token_minutes: int = 15
     refresh_token_days: int = 14
     log_level: str = "INFO"
+    job_secret: str = ""
+    job_backend: str = "inline"
 
 
 @lru_cache

@@ -116,7 +116,7 @@ def _transition(
             f"Cannot move an application from '{app.status}' to '{new_status}'",
             sorted(allowed),
         )
-    if app.status == "expired":
+    if app.status == "expired" and new_status != "submitted":
         reopened = opp.status == "open" and (opp.deadline_at is None or opp.deadline_at > now)
         if not reopened:
             raise AppError(
