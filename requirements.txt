@@ -10,3 +10,4 @@ email-validator
 pytest
 httpx
 ruff
+redis

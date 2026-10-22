@@ -28,6 +28,8 @@ def get_current_user(
     user = db.get(User, user_id)
     if user is None or not user.is_active or user.deleted_at is not None:
         raise AppError(401, "invalid_token", "Invalid or expired token")
+    if payload.get("ver") != user.token_version:  # logout-everywhere or password change
+        raise AppError(401, "invalid_token", "Invalid or expired token")
     return user
 
 

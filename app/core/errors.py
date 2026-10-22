@@ -5,11 +5,12 @@ from fastapi.responses import JSONResponse
 
 
 class AppError(Exception):
-    def __init__(self, status_code: int, code: str, message: str, details=None):
+    def __init__(self, status_code: int, code: str, message: str, details=None, headers=None):
         self.status_code = status_code
         self.code = code
         self.message = message
         self.details = details or []
+        self.headers = headers
 
 
 def register_error_handlers(app: FastAPI) -> None:
@@ -18,6 +19,7 @@ def register_error_handlers(app: FastAPI) -> None:
         return JSONResponse(
             status_code=exc.status_code,
             content={"error": {"code": exc.code, "message": exc.message, "details": exc.details}},
+            headers=exc.headers,
         )
 
     @app.exception_handler(RequestValidationError)

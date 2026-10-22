@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     job_secret: str = ""
     job_backend: str = "inline"
+    rate_limit_enabled: bool = True
+    login_max_failures: int = 5
+    login_lock_minutes: int = 15
 
 
 @lru_cache

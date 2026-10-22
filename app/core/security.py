@@ -30,12 +30,13 @@ def verify_dummy(password: str) -> None:
     verify_password(_DUMMY_HASH, password)
 
 
-def create_access_token(user_id: uuid.UUID, roles: list[str]) -> str:
+def create_access_token(user_id: uuid.UUID, roles: list[str], token_version: int = 0) -> str:
     s = get_settings()
     now = datetime.now(timezone.utc)
     payload = {
         "sub": str(user_id),
         "roles": roles,
+        "ver": token_version,
         "iat": now,
         "exp": now + timedelta(minutes=s.access_token_minutes),
         "jti": uuid.uuid4().hex,
