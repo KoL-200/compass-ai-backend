@@ -34,6 +34,14 @@ class Settings(BaseSettings):
     resend_api_key: str = ""
     frontend_base_url: str = "http://localhost:3000"
     require_verified_email: bool = False
+    ai_provider: str = "mock"
+    ai_model: str = "mock-1"
+    ai_timeout_seconds: int = 30
+    ai_run_timeout_seconds: int = 120
+    ai_max_retries: int = 2
+    ai_retry_backoff_seconds: float = 1.0
+    ai_daily_run_limit: int = 30
+    ai_max_parallel_steps: int = 4
 
 
 @lru_cache

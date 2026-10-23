@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 from tests.helpers import auth_headers
 from tests.test_applications import move, track
 from tests.test_matching_api import put_rules, student, world
-from tests.test_opportunities import admission, create, make_org, manager
+from tests.test_opportunites import admission, create, make_org, manager
 
 B = "/api/v1"
 

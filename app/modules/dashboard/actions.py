@@ -95,5 +95,10 @@ def next_actions(ctx: dict, now: datetime, limit: int = 10) -> list[dict]:
         add("start_application", 3 if soon else 4, f"Consider applying: {m['title']}", detail,
             {"kind": "opportunity", "id": str(m["opportunity_id"])}, deadline)
 
-    actions.sort(key=lambda a: (a["priority"], a["due_at"] or FAR, a["title"]))
+    actions.sort(
+        key=lambda a: (
+            a["priority"],
+            a["due_at"] if a["type"] == "deadline_approaching" else FAR,
+        )
+    )
     return actions[:limit]
