@@ -24,6 +24,7 @@ import app.modules.applications.models
 import app.modules.notifications.models
 import app.modules.goals.models  # noqa: F401
 import app.modules.ai.models  # noqa: F401
+import app.modules.strategy.models  # noqa: F401
 from app.main import app
 
 from app.core import mailer

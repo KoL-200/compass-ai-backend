@@ -96,3 +96,9 @@ class UsageOut(BaseModel):
     cost_usd_today: float
     provider: str
     model: str
+
+class GuidanceRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    opportunity_id: uuid.UUID
+    force: bool = False

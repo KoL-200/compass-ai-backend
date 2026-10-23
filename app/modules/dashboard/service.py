@@ -140,3 +140,5 @@ def build_dashboard(db: Session, user: User) -> dict:
         "unread_notifications": notifications_service.unread_count(db, user),
         "next_actions": actions,
     }
+
+profile_view = _profile_view

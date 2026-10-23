@@ -21,7 +21,7 @@ from app.modules.auth.models import User
 from tests.ai_helpers import SAMPLE_TEXT, ScriptedProvider, explain_payload, explanation
 from tests.helpers import auth_headers
 from tests.test_eligibility_api import fill_profile, open_opportunity
-from tests.test_opportunities import manager
+from tests.test_opportunites import manager
 
 B = "/api/v1"
 

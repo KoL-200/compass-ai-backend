@@ -8,7 +8,7 @@ from app.core.ratelimit import enforce
 from app.modules.ai import service
 from app.modules.ai.orchestrator import execute_run
 from app.modules.ai.schemas import (
-    ApplyOut, ApplyRequest, ExplainRequest, ExtractRequest, RunCreated, RunOut, RunPage, UsageOut,
+    ApplyOut, ApplyRequest, ExplainRequest, ExtractRequest, GuidanceRequest, RunCreated, RunOut, RunPage, UsageOut,
 )
 from app.modules.auth.dependencies import get_current_user
 from app.modules.auth.models import User
@@ -42,6 +42,21 @@ def explain_eligibility(
     opportunities_service.get_opportunity(db, body.opportunity_id, public=True)  # 404 early for hidden ones
     run = service.create_run(db, user, "eligibility_explain", {"opportunity_id": str(body.opportunity_id)})
     background.add_task(execute_run, run.id, {"opportunity_id": str(body.opportunity_id)})
+    return {"run_id": run.id, "status": run.status}
+
+
+@router.post("/guidance", response_model=RunCreated, status_code=202)
+def generate_guidance(
+    body: GuidanceRequest,
+    background: BackgroundTasks,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    enforce("ai-start", str(user.id), 10, 60)
+    opportunities_service.get_opportunity(db, body.opportunity_id, public=True)
+    payload = {"opportunity_id": str(body.opportunity_id), "force": body.force}
+    run = service.create_run(db, user, "guidance", payload)
+    background.add_task(execute_run, run.id, payload)
     return {"run_id": run.id, "status": run.status}
 
 

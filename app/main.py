@@ -21,6 +21,7 @@ from app.modules.dashboard.router import router as dashboard_router
 from app.modules.goals.router import router as goals_router
 from app.modules.ai import jobs as ai_jobs  # noqa: F401  (registers the ai-cleanup job)
 from app.modules.ai.router import router as ai_router
+from app.modules.strategy.router import router as strategy_router
 
 app = FastAPI(title="Compass AI", version="0.1.0")
 register_error_handlers(app)
@@ -41,6 +42,7 @@ app.include_router(careers_router, prefix="/api/v1")
 app.include_router(goals_router, prefix="/api/v1")
 app.include_router(dashboard_router, prefix="/api/v1")
 app.include_router(ai_router, prefix="/api/v1")
+app.include_router(strategy_router, prefix="/api/v1")
 
 @app.get("/health/live")
 def live():

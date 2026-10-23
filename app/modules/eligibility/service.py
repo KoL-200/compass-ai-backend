@@ -111,3 +111,18 @@ def list_results(db: Session, user: User, status: str | None, limit: int, offset
         .all()
     )
     return rows, total
+
+def payload(row) -> dict:
+    """The facts an AI agent may see about one result (no raw profile data)."""
+    opp = row.opportunity
+    return {
+        "status": row.status,
+        "opportunity": {"title": opp.title, "category": opp.category, "organization": opp.organization.name},
+        "requirements": [
+            {key: r.get(key) for key in ("label", "outcome", "expected", "actual", "reason")}
+            for r in row.details["requirements"]
+        ],
+        "counts": row.details["counts"],
+        "data_freshness": row.details["data_freshness"],
+        "engine_explanation": row.explanation,
+    }

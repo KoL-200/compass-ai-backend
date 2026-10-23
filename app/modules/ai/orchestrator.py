@@ -330,7 +330,7 @@ def execute_run(run_id: uuid.UUID, payload: dict) -> None:
         try:
             if pipeline is None:
                 raise RunFailed("unknown_task", "This kind of AI task is not available.")
-            ctx = {"user": db.get(User, run.user_id), "input": payload}
+            ctx = {"user": db.get(User, run.user_id), "input": payload, "run_id": run_id}
             _execute(db, run_id, pipeline, ctx)
             output, status = pipeline.result(ctx), "succeeded"
         except Cancelled:

@@ -113,3 +113,6 @@ def career_path(db: Session, user: User, role_family: str) -> dict:
         available = sorted({o.job.role_family for o in jobs if o.job.role_family})
         raise AppError(404, "role_family_not_found", f"No open postings for '{family}'", available)
     return {**paths.build_path(family, rows, skills, months), "note": PATH_NOTE}
+
+context = _context
+skill_lists = _skill_lists

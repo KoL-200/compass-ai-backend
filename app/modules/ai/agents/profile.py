@@ -1,4 +1,5 @@
 """Agent 1: Profile Intelligence. Turns free text into a proposed profile update."""
+import re
 from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
@@ -9,6 +10,10 @@ from app.modules.ai.orchestrator import Agent
 from app.modules.profiles.schemas import CountryCode, EducationLevel, RemotePreference, ShortText
 
 Tag = Annotated[str, StringConstraints(strip_whitespace=True, to_lower=True, min_length=1, max_length=100)]
+INSTRUCTION = re.compile(
+    r"\b(?:ignore|disregard|override)\b.{0,100}\b(?:instructions?|prompts?|rules?)\b",
+    re.IGNORECASE,
+)
 
 
 class ProfileProposal(BaseModel):
@@ -29,7 +34,12 @@ class ProfileProposal(BaseModel):
 def ground(proposal: ProfileProposal, payload: dict) -> dict:
     """Keep only what the text supports. Everything else is reported as unverified and cannot be applied."""
     text = payload["text"]
-    low = text.lower()
+    evidence = " ".join(
+        sentence
+        for sentence in re.split(r"(?<=[.!?])\s+|\n+", text)
+        if sentence.strip() and not INSTRUCTION.search(sentence)
+    )
+    low = evidence.lower()
     supported: dict = {}
     unverified: dict = {}
 
@@ -39,16 +49,16 @@ def ground(proposal: ProfileProposal, payload: dict) -> dict:
     for field in ("country", "nationality"):
         value = getattr(proposal, field)
         if value is not None:
-            sort(field, value, any(k.contains_term(text, a) for a in k.COUNTRY_ALIASES.get(value, [])))
+            sort(field, value, any(k.contains_term(evidence, a) for a in k.COUNTRY_ALIASES.get(value, [])))
     if proposal.education_level is not None:
         terms = k.LEVEL_KEYWORDS.get(proposal.education_level, [])
-        sort("education_level", proposal.education_level, any(k.contains_term(text, t) for t in terms))
+        sort("education_level", proposal.education_level, any(k.contains_term(evidence, t) for t in terms))
     for field in ("institution", "field_of_study"):
         value = getattr(proposal, field)
         if value is not None:
             sort(field, value, value.lower() in low)
     if proposal.graduation_year is not None:
-        sort("graduation_year", proposal.graduation_year, str(proposal.graduation_year) in text)
+        sort("graduation_year", proposal.graduation_year, str(proposal.graduation_year) in evidence)
     if proposal.remote_preference is not None:
         terms = k.REMOTE_KEYWORDS.get(proposal.remote_preference, [])
         sort("remote_preference", proposal.remote_preference, any(t in low for t in terms))
@@ -57,7 +67,7 @@ def ground(proposal: ProfileProposal, payload: dict) -> dict:
         sort("needs_financial_aid", proposal.needs_financial_aid, any(p in low for p in phrases))
     for field in ("skills", "career_interests"):
         values = getattr(proposal, field)
-        good = [v for v in values if k.contains_term(text, v)]
+        good = [v for v in values if k.contains_term(evidence, v)]
         bad = [v for v in values if v not in good]
         if good:
             supported[field] = good

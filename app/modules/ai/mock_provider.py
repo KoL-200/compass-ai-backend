@@ -5,6 +5,7 @@ import re
 from app.modules.ai import knowledge as k
 from app.modules.ai.explain_text import build_explanation
 from app.modules.ai.llm import LLMRequest, LLMResponse, ProviderError
+from app.modules.strategy.planning import build_rule_plan
 
 INTENT = re.compile(r"\b(want to|wants to|hope to|plan to|planning|apply|applying|pursue|pursuing|seeking|looking to)\b", re.I)
 FIELD = re.compile(
@@ -16,7 +17,6 @@ INTEREST = re.compile(
 INSTITUTION = re.compile(
     r"\b((?:the )?University of [A-Z][A-Za-z]+(?: [A-Z][A-Za-z]+)?|"
     r"[A-Z][A-Za-z]+(?: [A-Z][A-Za-z]+)? (?:University|Institute|College))\b")
-
 
 def _sentences(text: str) -> list[str]:
     return [s.strip() for s in re.split(r"(?<=[.!?])\s+|\n+", text) if s.strip()]
@@ -85,7 +85,11 @@ def _explain(payload: dict) -> dict:
     return {"status": payload["status"], **build_explanation(payload)}
 
 
-HANDLERS = {"profile_extract": _profile, "eligibility_explain": _explain}
+HANDLERS = {
+    "profile_extract": _profile,
+    "eligibility_explain": _explain,
+    "strategy_plan": build_rule_plan,
+}
 
 
 def _tokens(text: str) -> int:
