@@ -19,7 +19,7 @@ Tag = Annotated[
     str, StringConstraints(strip_whitespace=True, to_lower=True, min_length=1, max_length=100)
 ]
 
-Category = Literal["admission", "scholarship", "internship"]
+Category = Literal["admission", "scholarship", "internship", "job"]
 WorkMode = Literal["remote", "onsite", "hybrid", "unknown"]
 Status = Literal["draft", "open", "closed", "archived"]
 OrgType = Literal["university", "employer", "funder", "other"]
@@ -133,11 +133,46 @@ class InternshipDetails(_Details):
             raise ValueError("compensation_currency is required when compensation_amount is set")
         return self
 
+JobLevel = Literal["entry", "junior", "mid", "senior", "lead", "executive"]
+EmploymentType = Literal["full_time", "part_time", "contract", "temporary", "freelance"]
+SalaryPeriod = Literal["hour", "month", "year"]
+
+
+class JobDetails(_Details):
+    job_level: JobLevel
+    employment_type: EmploymentType
+    role_family: Tag | None = None
+    salary_min: float | None = Field(default=None, ge=0)
+    salary_max: float | None = Field(default=None, ge=0)
+    salary_currency: CurrencyCode | None = None
+    salary_period: SalaryPeriod | None = None
+    required_skills: list[Tag] = Field(default_factory=list, max_length=30)
+    preferred_skills: list[Tag] = Field(default_factory=list, max_length=30)
+    min_experience_months: int = Field(default=0, ge=0, le=600)
+
+    @field_validator("required_skills", "preferred_skills")
+    @classmethod
+    def no_duplicates(cls, v):
+        return list(dict.fromkeys(v))
+
+    @model_validator(mode="after")
+    def salary_is_consistent(self):
+        has_amount = self.salary_min is not None or self.salary_max is not None
+        if has_amount and (self.salary_currency is None or self.salary_period is None):
+            raise ValueError("salary_currency and salary_period are required when a salary is given")
+        if (
+            self.salary_min is not None
+            and self.salary_max is not None
+            and self.salary_max < self.salary_min
+        ):
+            raise ValueError("salary_max cannot be less than salary_min")
+        return self
 
 DETAIL_MODELS: dict[str, type[_Details]] = {
     "admission": AdmissionDetails,
     "scholarship": ScholarshipDetails,
     "internship": InternshipDetails,
+    "job": JobDetails,
 }
 
 
@@ -185,11 +220,17 @@ class InternshipOpportunityCreate(_OpportunityCommon):
     internship: InternshipDetails
 
 
+class JobOpportunityCreate(_OpportunityCommon):
+    category: Literal["job"]
+    job: JobDetails
+
+
 OpportunityCreate = Annotated[
     Union[
         AdmissionOpportunityCreate,
         ScholarshipOpportunityCreate,
         InternshipOpportunityCreate,
+        JobOpportunityCreate,
     ],
     Field(discriminator="category"),
 ]
@@ -246,6 +287,7 @@ class OpportunityOut(BaseModel):
     admission: AdmissionDetails | None
     scholarship: ScholarshipDetails | None
     internship: InternshipDetails | None
+    job: JobDetails | None
     created_at: datetime
     updated_at: datetime
 

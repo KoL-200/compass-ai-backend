@@ -17,7 +17,7 @@ from app.modules.profiles import service as profiles_service
 MAX_OPPORTUNITIES = 500
 
 
-def build_preferences(profile) -> dict:
+def build_preferences(profile, today) -> dict:
     interests: list[str] = []
     for term in [profile.field_of_study, *(profile.career_interests or [])]:
         clean = term.strip().lower() if term else ""
@@ -31,6 +31,9 @@ def build_preferences(profile) -> dict:
         "needs_financial_aid": profile.needs_financial_aid,
         "remote_preference": profile.remote_preference,
         "preferred_locations": [p.strip().lower() for p in (profile.preferred_locations or []) if p.strip()],
+        "experience_months": engine.experience_months(
+            [{"start_date": e.start_date, "end_date": e.end_date} for e in profile.experiences], today
+        ),
     }
 
 
@@ -55,8 +58,8 @@ def opportunity_view(opp: Opportunity) -> dict:
 def refresh_matches(db: Session, user: User) -> dict:
     profile = profiles_service.get_or_create_profile(db, user)
     snapshot = eligibility_service.build_snapshot(profile)
-    prefs = build_preferences(profile)
     now = datetime.now(timezone.utc)
+    prefs = build_preferences(profile, now.date())
 
     opportunities, total = opportunities_service.list_opportunities(
         db, public=True, limit=MAX_OPPORTUNITIES, offset=0

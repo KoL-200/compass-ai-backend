@@ -137,7 +137,7 @@ def test_filters_and_pagination_limits(client):
     client.post(f"{B}/matches/refresh", headers=h)
 
     assert ids(client.get(f"{B}/matches", params={"category": "internship"}, headers=h)) == [c]
-    assert client.get(f"{B}/matches", params={"category": "job"}, headers=h).status_code == 422
+    assert client.get(f"{B}/matches", params={"category": "event"}, headers=h).status_code == 422
     assert client.get(f"{B}/matches", params={"limit": 500}, headers=h).status_code == 422
     page = client.get(f"{B}/matches", params={"limit": 1}, headers=h).json()
     assert len(page["items"]) == 1 and page["total"] == 2

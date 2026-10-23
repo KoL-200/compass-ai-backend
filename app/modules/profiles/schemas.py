@@ -17,6 +17,7 @@ Tag = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_
 EducationLevel = Literal["secondary", "diploma", "bachelor", "master", "doctorate", "other"]
 RemotePreference = Literal["remote", "onsite", "hybrid", "any"]
 SkillLevel = Literal["beginner", "intermediate", "advanced"]
+Link = Annotated[str, StringConstraints(strip_whitespace=True, pattern=r"^https?://\S+$", max_length=300)]
 
 
 def _normalize_subjects(v: dict[str, str]) -> dict[str, str]:
@@ -36,6 +37,9 @@ class ProfileUpdate(BaseModel):
     remote_preference: RemotePreference | None = None
     career_interests: list[Tag] | None = Field(default=None, max_length=20)
     preferred_locations: list[Tag] | None = Field(default=None, max_length=20)
+    headline: ShortText | None = None
+    summary: str | None = Field(default=None, max_length=2000)
+    links: list[Link] | None = Field(default=None, max_length=10)
 
     @field_validator("date_of_birth")
     @classmethod
@@ -146,6 +150,9 @@ class ProfileOut(BaseModel):
     remote_preference: str | None
     career_interests: list[str]
     preferred_locations: list[str]
+    headline: str | None
+    summary: str | None
+    links: list[str]
     qualifications: list[QualificationOut]
     skills: list[SkillOut]
     experiences: list[ExperienceOut]

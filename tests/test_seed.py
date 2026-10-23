@@ -35,10 +35,10 @@ def test_sample_file_seeds_cleanly_and_is_idempotent():
         unverified = db.scalar(
             select(func.count()).select_from(m.Opportunity).where(m.Opportunity.data_quality == "unverified")
         )
-    assert first == {"organizations": 3, "sources": 3, "opportunities": 9, "skipped": 0}
-    assert second == {"organizations": 0, "sources": 0, "opportunities": 0, "skipped": 9}
-    assert categories == {"admission": 3, "scholarship": 3, "internship": 3}
-    assert unverified == 9  # sample data is never verified unless asked
+    assert first == {"organizations": 3, "sources": 3, "opportunities": 12, "skipped": 0}
+    assert second == {"organizations": 0, "sources": 0, "opportunities": 0, "skipped": 12}
+    assert categories == {"admission": 3, "scholarship": 3, "internship": 3, "job": 3}
+    assert unverified == 12  # sample data is never verified unless asked
 
 
 def test_invalid_rule_tree_aborts_before_writing_any_opportunity():

@@ -14,7 +14,7 @@ from app.modules.profiles.models import (
     WorkExperience,
 )
 
-LIST_FIELDS = {"career_interests", "preferred_locations"}
+LIST_FIELDS = {"career_interests", "preferred_locations", "links"}
 REQUIRED_FOR_MATCHING = ("country", "nationality", "education_level", "field_of_study")
 
 

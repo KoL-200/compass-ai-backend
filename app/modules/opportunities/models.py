@@ -119,6 +119,45 @@ class InternshipDetails(Base):
         Integer, default=0, server_default=text("0")
     )
 
+class JobDetails(Base):
+    __tablename__ = "job_details"
+    __table_args__ = (
+        CheckConstraint(
+            "job_level IN ('entry','junior','mid','senior','lead','executive')", name="ck_job_level"
+        ),
+        CheckConstraint(
+            "employment_type IN ('full_time','part_time','contract','temporary','freelance')",
+            name="ck_job_employment_type",
+        ),
+        CheckConstraint(
+            "salary_period IS NULL OR salary_period IN ('hour','month','year')",
+            name="ck_job_salary_period",
+        ),
+        CheckConstraint(
+            "salary_min IS NULL OR salary_max IS NULL OR salary_max >= salary_min",
+            name="ck_job_salary_range",
+        ),
+    )
+
+    opportunity_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("opportunities.id", ondelete="CASCADE"), primary_key=True
+    )
+    job_level: Mapped[str] = mapped_column(String(10))
+    employment_type: Mapped[str] = mapped_column(String(15))
+    role_family: Mapped[str | None] = mapped_column(String(100), index=True)
+    salary_min: Mapped[float | None] = mapped_column(Money)
+    salary_max: Mapped[float | None] = mapped_column(Money)
+    salary_currency: Mapped[str | None] = mapped_column(String(3))
+    salary_period: Mapped[str | None] = mapped_column(String(5))
+    required_skills: Mapped[list] = mapped_column(
+        JSONB, default=list, server_default=text("'[]'::jsonb")
+    )
+    preferred_skills: Mapped[list] = mapped_column(
+        JSONB, default=list, server_default=text("'[]'::jsonb")
+    )
+    min_experience_months: Mapped[int] = mapped_column(
+        Integer, default=0, server_default=text("0")
+    )
 
 # ---- the shared opportunity table ----
 
@@ -126,7 +165,7 @@ class Opportunity(Base, UUIDPK, Timestamps):
     __tablename__ = "opportunities"
     __table_args__ = (
         CheckConstraint(
-            "category IN ('admission','scholarship','internship')", name="ck_opp_category"
+            "category IN ('admission','scholarship','internship','job')", name="ck_opp_category"
         ),
         CheckConstraint("status IN ('draft','open','closed','archived')", name="ck_opp_status"),
         CheckConstraint(
@@ -177,5 +216,8 @@ class Opportunity(Base, UUIDPK, Timestamps):
         cascade="all, delete-orphan", lazy="selectin", uselist=False
     )
     internship: Mapped[InternshipDetails | None] = relationship(
+        cascade="all, delete-orphan", lazy="selectin", uselist=False
+    )
+    job: Mapped[JobDetails | None] = relationship(
         cascade="all, delete-orphan", lazy="selectin", uselist=False
     )

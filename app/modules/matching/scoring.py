@@ -7,6 +7,8 @@ from __future__ import annotations
 import re
 from datetime import datetime
 
+from app.core.levels import LEVEL_MONTHS
+
 ALGORITHM_VERSION = "1.0.0"
 
 # Eligibility is a constraint, not a preference: it caps what an opportunity can score.
@@ -23,6 +25,7 @@ WEIGHTS: dict[str, dict[str, int]] = {  # each category sums to 100
     "admission": {"interest": 40, "level": 30, "location": 20, "timing": 10},
     "scholarship": {"financial": 35, "interest": 25, "funding": 20, "location": 10, "timing": 10},
     "internship": {"skills": 35, "interest": 25, "work_mode": 15, "location": 15, "timing": 10},
+    "job": {"skills": 30, "interest": 20, "seniority": 15, "location": 15, "work_mode": 10, "timing": 10},
 }
 
 LABELS = {
@@ -34,6 +37,7 @@ LABELS = {
     "funding": "Funding offered",
     "skills": "Skills fit",
     "work_mode": "Work arrangement fit",
+    "seniority": "Seniority fit",
 }
 
 # Natural next study steps from a profile's current education level.
@@ -57,7 +61,7 @@ def _tokens(text: str) -> set[str]:
 
 def _opp_text(opp: dict) -> str:
     d = opp.get("details") or {}
-    parts = [opp.get("title") or "", d.get("department") or ""]
+    parts = [opp.get("title") or "", d.get("department") or "", d.get("role_family") or ""]
     parts += d.get("required_skills") or []
     return " ".join(parts)
 
@@ -192,10 +196,27 @@ def _work_mode(prefs: dict, opp: dict, now: datetime) -> Outcome:
         return 0.5, f"{mode} work partly fits your preference for {pref}", None
     return 0.0, f"{mode} work conflicts with your preference for {pref}", None
 
+def _seniority(prefs: dict, opp: dict, now: datetime) -> Outcome:
+    level = (opp.get("details") or {}).get("job_level")
+    window = LEVEL_MONTHS.get(level)
+    if window is None:
+        return None, "Job level not stated", None
+    months = prefs.get("experience_months")
+    low, high = window
+    if months is None:
+        if low == 0:
+            return 1.0, "Entry-level roles suit candidates with no recorded experience", None
+        return None, "No work experience recorded", "Add your work experience"
+    if months < low:
+        return 0.5 * months / low, f"About {months} months of experience; a {level} role usually needs {low}+", None
+    if months > high:
+        return 0.8, f"More experience ({months} months) than is typical for a {level} role", None
+    return 1.0, f"Your {months} months of experience fits a {level} role", None
 
 FACTORS = {
     "interest": _interest, "level": _level, "location": _location, "timing": _timing,
     "financial": _financial, "funding": _funding, "skills": _skills, "work_mode": _work_mode,
+    "seniority": _seniority,
 }
 
 

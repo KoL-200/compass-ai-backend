@@ -103,6 +103,9 @@ class Profile(Base, UUIDPK, Timestamps):
     career_interests: Mapped[list] = mapped_column(
         JSONB, default=list, server_default=text("'[]'::jsonb")
     )
+    headline: Mapped[str | None] = mapped_column(String(200))
+    summary: Mapped[str | None] = mapped_column(Text)
+    links: Mapped[list] = mapped_column(JSONB, default=list, server_default=text("'[]'::jsonb"))
     preferred_locations: Mapped[list] = mapped_column(
         JSONB, default=list, server_default=text("'[]'::jsonb")
     )

@@ -186,7 +186,7 @@ def test_search_and_filters(client):
     assert titles(q="computer") == ["BSc Computer Science"]
     assert titles(q="british") == ["Global Award"]  # matches organization name
     assert titles(q="nothing-like-this") == []
-    assert client.get(f"{B}/opportunities", params={"category": "job"}, headers=u).status_code == 422
+    assert client.get(f"{B}/opportunities", params={"category": "event"}, headers=u).status_code == 422
 
 
 def test_search_treats_percent_literally(client):

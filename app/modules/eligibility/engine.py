@@ -64,6 +64,7 @@ def _experience_months(experiences: list[dict], today: date) -> int | None:
     days = sum((e - s).days for s, e in merged)
     return days * 12 // 365  # approximate whole months; overlapping jobs counted once
 
+experience_months = _experience_months
 
 def _resolve(leaf: dict, snap: dict, today: date):
     """Return (actual_value, reason). actual_value None means 'unknown'."""

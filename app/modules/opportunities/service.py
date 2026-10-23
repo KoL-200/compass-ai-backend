@@ -15,6 +15,7 @@ DETAIL_ORM = {
     "admission": m.AdmissionDetails,
     "scholarship": m.ScholarshipDetails,
     "internship": m.InternshipDetails,
+    "job": m.JobDetails,
 }
 NOT_NULLABLE = ("title", "organization_id", "work_mode", "status")
 OFFICIAL_SOURCE_TYPES = ("official_website", "official_portal")

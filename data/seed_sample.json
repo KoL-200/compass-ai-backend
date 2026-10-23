@@ -530,6 +530,168 @@
           }
         ]
       }
+    },
+    {
+      "org": "demo-tech",
+      "source": "demo-tech-site",
+      "demo": true,
+      "body": {
+        "category": "job",
+        "title": "Junior Backend Developer (SAMPLE)",
+        "description": "SAMPLE DATA for testing. Not a real job.",
+        "country": "NG",
+        "location": "Lagos",
+        "work_mode": "hybrid",
+        "application_url": "https://demo-tech.example.com/jobs/junior-backend",
+        "opens_at": "2026-10-01T00:00:00Z",
+        "deadline_at": "2027-01-31T23:59:00Z",
+        "status": "open",
+        "job": {
+          "job_level": "junior",
+          "employment_type": "full_time",
+          "role_family": "software engineering",
+          "salary_min": 300000,
+          "salary_max": 450000,
+          "salary_currency": "NGN",
+          "salary_period": "month",
+          "required_skills": [
+            "python",
+            "sql",
+            "git"
+          ],
+          "preferred_skills": [
+            "docker"
+          ],
+          "min_experience_months": 6
+        }
+      },
+      "requirements": {
+        "type": "AND",
+        "children": [
+          {
+            "type": "LEAF",
+            "field": "education_level",
+            "op": "gte",
+            "value": "bachelor"
+          },
+          {
+            "type": "LEAF",
+            "field": "skills",
+            "op": "contains_all",
+            "value": [
+              "python",
+              "sql"
+            ]
+          },
+          {
+            "type": "LEAF",
+            "field": "experience_months",
+            "op": "gte",
+            "value": 6
+          }
+        ]
+      }
+    },
+    {
+      "org": "demo-tech",
+      "source": "demo-tech-site",
+      "demo": true,
+      "body": {
+        "category": "job",
+        "title": "Backend Developer (SAMPLE)",
+        "description": "SAMPLE DATA for testing. Not a real job.",
+        "country": "NG",
+        "location": "Lagos",
+        "work_mode": "hybrid",
+        "application_url": "https://demo-tech.example.com/jobs/backend",
+        "opens_at": "2026-10-01T00:00:00Z",
+        "deadline_at": "2027-02-28T23:59:00Z",
+        "status": "open",
+        "job": {
+          "job_level": "mid",
+          "employment_type": "full_time",
+          "role_family": "software engineering",
+          "salary_min": 550000,
+          "salary_max": 800000,
+          "salary_currency": "NGN",
+          "salary_period": "month",
+          "required_skills": [
+            "python",
+            "sql",
+            "docker"
+          ],
+          "preferred_skills": [
+            "aws"
+          ],
+          "min_experience_months": 24
+        }
+      },
+      "requirements": {
+        "type": "AND",
+        "children": [
+          {
+            "type": "LEAF",
+            "field": "skills",
+            "op": "contains_all",
+            "value": [
+              "python",
+              "sql"
+            ]
+          },
+          {
+            "type": "LEAF",
+            "field": "experience_months",
+            "op": "gte",
+            "value": 24
+          }
+        ]
+      }
+    },
+    {
+      "org": "demo-tech",
+      "source": "demo-tech-site",
+      "demo": true,
+      "body": {
+        "category": "job",
+        "title": "Senior Backend Engineer (SAMPLE)",
+        "description": "SAMPLE DATA for testing. Not a real job.",
+        "country": "NG",
+        "location": "Lagos",
+        "work_mode": "remote",
+        "application_url": "https://demo-tech.example.com/jobs/senior-backend",
+        "opens_at": "2026-10-01T00:00:00Z",
+        "deadline_at": "2027-03-31T23:59:00Z",
+        "status": "open",
+        "job": {
+          "job_level": "senior",
+          "employment_type": "full_time",
+          "role_family": "software engineering",
+          "salary_min": 900000,
+          "salary_max": 1400000,
+          "salary_currency": "NGN",
+          "salary_period": "month",
+          "required_skills": [
+            "python",
+            "system design",
+            "docker"
+          ],
+          "preferred_skills": [
+            "kubernetes"
+          ],
+          "min_experience_months": 60
+        }
+      },
+      "requirements": {
+        "type": "AND",
+        "children": [
+          {
+            "type": "LEAF",
+            "field": "experience_months",
+            "op": "gte",
+            "value": 60
+          }
+        ]
+      }
     }
   ]
 }
