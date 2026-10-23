@@ -129,3 +129,6 @@ def list_matches(
         .offset(offset)
     )
     return db.scalars(stmt).unique().all(), total
+
+def last_computed_at(db: Session, user: User) -> datetime | None:
+    return db.scalar(select(func.max(Match.calculated_at)).where(Match.user_id == user.id))

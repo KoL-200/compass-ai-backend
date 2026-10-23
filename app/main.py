@@ -17,6 +17,8 @@ from app.modules.notifications.router import internal_router as jobs_router
 from app.modules.notifications.router import router as notifications_router
 from app.modules.auth.router import placeholder_router
 from app.modules.careers.router import router as careers_router
+from app.modules.dashboard.router import router as dashboard_router
+from app.modules.goals.router import router as goals_router
 
 app = FastAPI(title="Compass AI", version="0.1.0")
 register_error_handlers(app)
@@ -34,6 +36,8 @@ app.include_router(notifications_router, prefix="/api/v1")
 app.include_router(jobs_router)
 app.include_router(placeholder_router)
 app.include_router(careers_router, prefix="/api/v1")
+app.include_router(goals_router, prefix="/api/v1")
+app.include_router(dashboard_router, prefix="/api/v1")
 
 @app.get("/health/live")
 def live():

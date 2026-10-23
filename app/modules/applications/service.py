@@ -230,3 +230,49 @@ def delete_checklist_item(db: Session, user: User, app_id: uuid.UUID, item_id: u
     item = _get_item(db, app, item_id)
     app.checklist.remove(item)  # delete-orphan removes the row
     db.commit()
+
+def stats(db: Session, user: User) -> dict:
+    """Counts for the dashboard, all scoped to the user."""
+    by_status = dict(
+        db.execute(
+            select(Application.status, func.count())
+            .where(Application.user_id == user.id)
+            .group_by(Application.status)
+        ).all()
+    )
+    by_category = dict(
+        db.execute(
+            select(Opportunity.category, func.count())
+            .select_from(Application)
+            .join(Opportunity, Application.opportunity_id == Opportunity.id)
+            .where(Application.user_id == user.id)
+            .group_by(Opportunity.category)
+        ).all()
+    )
+    submitted = db.scalar(
+        select(func.count())
+        .select_from(Application)
+        .where(Application.user_id == user.id, Application.submitted_at.is_not(None))
+    )
+
+    def ever_reached(status: str) -> int:
+        return db.scalar(
+            select(func.count(func.distinct(ApplicationEvent.application_id)))
+            .select_from(ApplicationEvent)
+            .join(Application, ApplicationEvent.application_id == Application.id)
+            .where(Application.user_id == user.id, ApplicationEvent.to_status == status)
+        )
+
+    return {
+        "total": sum(by_status.values()),
+        "active": sum(n for s, n in by_status.items() if s not in INACTIVE),
+        "by_status": by_status,
+        "by_category": by_category,
+        "submitted_ever": submitted,
+        "interviews_ever": ever_reached("interview_assessment"),
+        "offers_ever": ever_reached("offer_received"),
+    }
+
+
+def tracked_opportunity_ids(db: Session, user: User) -> set[uuid.UUID]:
+    return set(db.scalars(select(Application.opportunity_id).where(Application.user_id == user.id)).all())
