@@ -18,6 +18,12 @@ class Settings(BaseSettings):
     rate_limit_enabled: bool = True
     login_max_failures: int = 5
     login_lock_minutes: int = 15
+    public_base_url: str = "http://localhost:8000"
+    frontend_callback_url: str = "http://localhost:8000/oauth-placeholder"
+    google_client_id: str = ""
+    google_client_secret: str = ""
+    github_client_id: str = ""
+    github_client_secret: str = ""
 
 
 @lru_cache

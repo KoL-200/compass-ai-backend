@@ -214,3 +214,15 @@ def change_password(
     audit.record(db, "password_changed", user_id=user.id, ip=ip)
     db.commit()
     return pair
+
+def revoke_all_tokens(db: Session, user_id: uuid.UUID) -> None:
+    _revoke_all_tokens(db, user_id)
+
+
+def start_session(db: Session, user: User, *, method: str, ip: str | None = None) -> TokenPair:
+    """Issue a token pair for a user who has already been authenticated by some method."""
+    user.last_login_at = _now()
+    _, pair = _issue_tokens(db, user)
+    audit.record(db, "login_success", user_id=user.id, ip=ip, method=method)
+    db.commit()
+    return pair

@@ -1,7 +1,9 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table, Uuid, func, text
+from sqlalchemy import (
+    CheckConstraint, Column, DateTime, ForeignKey, Integer, String, Table, UniqueConstraint, Uuid, func, text,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -78,4 +80,40 @@ class AuthEvent(Base, UUIDPK):
     detail: Mapped[dict] = mapped_column(JSONB, default=dict, server_default=text("'{}'::jsonb"))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), index=True
+    )
+
+class OAuthAccount(Base, UUIDPK):
+    """Links a user to a Google or GitHub identity."""
+
+    __tablename__ = "oauth_accounts"
+    __table_args__ = (
+        UniqueConstraint("provider", "provider_user_id", name="uq_oauth_provider_subject"),
+        UniqueConstraint("user_id", "provider", name="uq_oauth_user_provider"),
+        CheckConstraint("provider IN ('google','github')", name="ck_oauth_provider"),
+    )
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    provider: Mapped[str] = mapped_column(String(20))
+    provider_user_id: Mapped[str] = mapped_column(String(100))
+    email: Mapped[str] = mapped_column(String(320))  # the email the provider gave us at link time
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+
+class OAuthLoginCode(Base, UUIDPK):
+    """One-time code handed to the frontend after a successful provider sign-in."""
+
+    __tablename__ = "oauth_login_codes"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    code_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
     )
