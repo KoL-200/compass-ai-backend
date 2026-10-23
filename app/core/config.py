@@ -24,6 +24,16 @@ class Settings(BaseSettings):
     google_client_secret: str = ""
     github_client_id: str = ""
     github_client_secret: str = ""
+    email_backend: str = "console"  # console | smtp | resend | memory
+    email_from: str = "Compass AI <no-reply@example.com>"
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_starttls: bool = True
+    resend_api_key: str = ""
+    frontend_base_url: str = "http://localhost:3000"
+    require_verified_email: bool = False
 
 
 @lru_cache

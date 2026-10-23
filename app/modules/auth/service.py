@@ -132,6 +132,12 @@ def login(db: Session, email: str, password: str, ip: str | None = None) -> Toke
     if not verify_password(user.password_hash, password):
         _register_failure(db, user, ip, now)
         raise _bad_credentials()
+    if get_settings().require_verified_email and user.email_verified_at is None:
+        audit.record(db, "login_blocked", user_id=user.id, ip=ip, reason="email_not_verified")
+        db.commit()
+        raise AppError(
+            403, "email_not_verified", "Confirm your email address first. Check your inbox or request a new link."
+        )
 
     user.failed_login_count = 0
     user.locked_until = None

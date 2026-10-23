@@ -5,6 +5,7 @@ os.environ["DATABASE_URL"] = "postgresql+psycopg://compass:compass@db:5432/compa
 os.environ["REDIS_URL"] = "redis://redis:6379/1"  # database 1, so tests never touch dev data
 os.environ["RATE_LIMIT_ENABLED"] = "false"  # only the tests that check limits turn it on
 os.environ["ENV"] = "development"
+os.environ["EMAIL_BACKEND"] = "memory"
 os.environ["JOB_SECRET"] = "test-job-secret-not-for-production"
 os.environ.setdefault("JWT_SECRET", "test-secret-not-for-production-use-1234")
 
@@ -21,6 +22,14 @@ import app.modules.matching.models
 import app.modules.applications.models
 import app.modules.notifications.models
 from app.main import app
+
+from app.core import mailer
+
+
+@pytest.fixture(autouse=True)
+def _clean_outbox():
+    mailer.OUTBOX.clear()
+    yield
 
 
 @pytest.fixture(scope="session", autouse=True)

@@ -46,6 +46,10 @@ class User(Base, UUIDPK, Timestamps):
     )
 
     roles: Mapped[list[Role]] = relationship(secondary=user_roles, lazy="selectin")
+    
+    @property
+    def email_verified(self) -> bool:
+        return self.email_verified_at is not None
 
 
 class RefreshToken(Base, UUIDPK):
@@ -112,6 +116,25 @@ class OAuthLoginCode(Base, UUIDPK):
         Uuid, ForeignKey("users.id", ondelete="CASCADE"), index=True
     )
     code_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+class EmailToken(Base, UUIDPK):
+    """Single-use links for email verification and password reset (only a hash is stored)."""
+
+    __tablename__ = "email_tokens"
+    __table_args__ = (
+        CheckConstraint("purpose IN ('verify_email','reset_password')", name="ck_email_token_purpose"),
+    )
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    purpose: Mapped[str] = mapped_column(String(20))
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(

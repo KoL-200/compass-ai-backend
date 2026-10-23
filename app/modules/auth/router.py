@@ -14,6 +14,10 @@ from app.modules.auth.schemas import (
     RegisterRequest,
     TokenPair,
     UserOut,
+    ForgotPasswordRequest,
+    ResetPasswordRequest,
+    StatusOut,
+    TokenRequest
 )
 
 import html
@@ -26,6 +30,15 @@ from app.core.config import get_settings
 from app.core.errors import AppError
 from app.modules.auth import audit, oauth, oauth_service
 
+import logging
+
+from fastapi import BackgroundTasks
+
+from app.core.mailer import send_email
+from app.modules.auth import email_flows
+
+log = logging.getLogger(__name__)
+
 router = APIRouter(prefix="/auth", tags=["auth"])
 users_router = APIRouter(prefix="/users", tags=["users"])
 
@@ -36,8 +49,19 @@ users_router = APIRouter(prefix="/users", tags=["users"])
     status_code=201,
     dependencies=[Depends(ip_limit("register", 10, 3600))],
 )
-def register(body: RegisterRequest, request: Request, db: Session = Depends(get_db)):
-    return service.register(db, body.email, body.password, ip=client_ip(request))
+def register(
+    body: RegisterRequest,
+    request: Request,
+    background: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
+    user = service.register(db, body.email, body.password, ip=client_ip(request))
+    try:
+        background.add_task(send_email, *email_flows.verification_message(db, user))
+    except Exception:  # the account exists; the user can ask for a new link
+        db.rollback()
+        log.exception("Could not prepare the verification email")
+    return user
 
 
 @router.post(
@@ -77,13 +101,16 @@ def logout_all(
 def change_password(
     body: ChangePasswordRequest,
     request: Request,
+    background: BackgroundTasks,
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     enforce("change-password", str(user.id), 5, 900)
-    return service.change_password(
+    pair = service.change_password(
         db, user, body.current_password, body.new_password, ip=client_ip(request)
     )
+    background.add_task(send_email, *email_flows.password_changed_notice(user))
+    return pair
 
 
 
@@ -176,3 +203,63 @@ def oauth_placeholder(code: str | None = None, error: str | None = None):
         f"<!doctype html><title>Sign-in placeholder</title>{body}",
         headers={"Cache-Control": "no-store", "Referrer-Policy": "no-referrer"},
     )
+
+# ---------- email verification and password reset ----------
+
+@router.post(
+    "/verify-email",
+    status_code=204,
+    dependencies=[Depends(ip_limit("verify-email", 20, 3600))],
+)
+def verify_email(body: TokenRequest, request: Request, db: Session = Depends(get_db)):
+    email_flows.verify_email(db, body.token, ip=client_ip(request))
+    return Response(status_code=204)
+
+
+@router.post("/resend-verification", response_model=StatusOut, status_code=202)
+def resend_verification(
+    background: BackgroundTasks,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    enforce("resend-verification", str(user.id), 3, 3600)
+    if user.email_verified_at is not None:
+        return {"message": "already_verified"}
+    background.add_task(send_email, *email_flows.verification_message(db, user))
+    return {"message": "sent"}
+
+
+@router.post(
+    "/forgot-password",
+    response_model=StatusOut,
+    status_code=202,
+    dependencies=[Depends(ip_limit("forgot-ip", 10, 3600))],
+)
+def forgot_password(
+    body: ForgotPasswordRequest,
+    request: Request,
+    background: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
+    enforce("forgot-email", hash_ident(body.email), 3, 3600)
+    outgoing = email_flows.request_password_reset(db, body.email, ip=client_ip(request))
+    if outgoing is not None:
+        background.add_task(send_email, *outgoing)
+    # The same answer whether or not the address has an account.
+    return {"message": "If that address has an account, a reset link is on its way."}
+
+
+@router.post(
+    "/reset-password",
+    status_code=204,
+    dependencies=[Depends(ip_limit("reset-password", 10, 3600))],
+)
+def reset_password(
+    body: ResetPasswordRequest,
+    request: Request,
+    background: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
+    notice = email_flows.reset_password(db, body.token, body.new_password, ip=client_ip(request))
+    background.add_task(send_email, *notice)
+    return Response(status_code=204)

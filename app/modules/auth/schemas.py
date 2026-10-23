@@ -22,6 +22,7 @@ class UserOut(BaseModel):
 
     id: uuid.UUID
     email: EmailStr
+    email_verified: bool
 
 
 class TokenPair(BaseModel):
@@ -36,3 +37,20 @@ class ChangePasswordRequest(BaseModel):
 
 class OAuthExchangeRequest(BaseModel):
     code: str = Field(min_length=10, max_length=200)
+
+
+class TokenRequest(BaseModel):
+    token: str = Field(min_length=10, max_length=200)
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str = Field(min_length=10, max_length=200)
+    new_password: str = Field(min_length=10, max_length=128)
+
+
+class StatusOut(BaseModel):
+    message: str
