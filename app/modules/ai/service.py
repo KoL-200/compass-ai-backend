@@ -12,6 +12,7 @@ from app.modules.ai.models import AIRun
 from app.modules.auth.models import User
 from app.modules.profiles import service as profiles_service
 from app.modules.profiles.schemas import ProfileUpdate
+from app.modules.applications import service as applications_service
 
 SCALARS = ("country", "nationality", "education_level", "institution", "field_of_study",
            "graduation_year", "remote_preference", "needs_financial_aid")
@@ -154,3 +155,39 @@ def apply_profile_proposal(db: Session, user: User, run_id: uuid.UUID, fields: l
     run.output = {**(run.output or {}), "applied_fields": chosen}
     db.commit()
     return {"applied": chosen, "changes": changes}
+
+def apply_checklist(db: Session, user: User, run_id: uuid.UUID, items: list[int] | None) -> dict:
+    """The human approval step for checklist proposals: nothing is added until this is called."""
+    run = get_run(db, user, run_id)
+    if run.task_type != "application_checklist" or run.status != "succeeded":
+        raise AppError(422, "not_applicable", "This run has no checklist proposal to apply")
+    if run.applied_at is not None:
+        raise AppError(409, "already_applied", "This proposal has already been applied")
+
+    proposal = (run.output or {}).get("items") or []
+    indexes = list(dict.fromkeys(items)) if items is not None else list(range(len(proposal)))
+    if not indexes:
+        raise AppError(422, "nothing_to_apply", "There are no suggestions to add")
+    bad = [i for i in indexes if i >= len(proposal)]
+    if bad:
+        raise AppError(422, "invalid_items", "These item numbers are not in the proposal", bad)
+
+    app_id = uuid.UUID(run.input_meta["application_id"])
+    application = applications_service.get_application(db, user, app_id)  # 404 if it is gone
+    existing = {c.label.casefold() for c in application.checklist}
+    chosen, skipped = [], []
+    for i in indexes:
+        label = proposal[i]["label"]
+        (skipped if label.casefold() in existing else chosen).append(label)
+        existing.add(label.casefold())
+    if len(application.checklist) + len(chosen) > applications_service.MAX_CHECKLIST_ITEMS:
+        raise AppError(422, "checklist_full", "These items would not fit in the checklist")
+
+    for label in chosen:
+        applications_service.add_checklist_item(db, user, app_id, label)
+
+    run = get_run(db, user, run_id)
+    run.applied_at = _now()
+    run.output = {**(run.output or {}), "applied_items": chosen}
+    db.commit()
+    return {"added": chosen, "skipped": skipped}

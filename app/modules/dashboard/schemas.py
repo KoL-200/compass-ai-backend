@@ -84,11 +84,19 @@ class NextAction(BaseModel):
     due_at: datetime | None
 
 
+class PlanTasks(BaseModel):
+    open: int
+    done: int
+    overdue: int
+    due_soon: int
+
+
 class DashboardOut(BaseModel):
     profile: ProfileSummary
     goals: list[GoalBrief]
     applications: ApplicationSummary
     matches: MatchSummary
     progress: Progress
+    plan_tasks: PlanTasks
     unread_notifications: int
     next_actions: list[NextAction]

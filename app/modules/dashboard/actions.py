@@ -57,6 +57,19 @@ def next_actions(ctx: dict, now: datetime, limit: int = 10) -> list[dict]:
                     f"Nothing has been recorded for {quiet} days. If you have heard back, record it.",
                     target,
                 )
+    
+    # --- steps from accepted plans ---
+    for task in ctx.get("tasks", []):
+        days = (task["due_date"] - now.date()).days
+        target = {"kind": "strategy_task", "id": str(task["id"])}
+        if days < 0:
+            add("overdue_task", 1, f"Overdue: {task['title']}",
+                f"This step of your plan for {task['opportunity']} was due {-days} day(s) ago. "
+                "Do it, change its date, or mark it skipped.", target)
+        else:
+            when = "today" if days == 0 else "tomorrow" if days == 1 else f"in {days} days"
+            add("task_due_soon", 3 if days <= 1 else 4, f"Due {when}: {task['title']}",
+                f"Part of your plan for {task['opportunity']}.", target)
 
     # --- profile and account ---
     if not ctx["email_verified"]:

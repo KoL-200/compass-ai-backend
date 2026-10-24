@@ -6,6 +6,10 @@ from app.modules.ai import knowledge as k
 from app.modules.ai.explain_text import build_explanation
 from app.modules.ai.llm import LLMRequest, LLMResponse, ProviderError
 from app.modules.strategy.planning import build_rule_plan
+from app.modules.ai.agents.application import build_rule_checklist, build_rule_review
+from app.modules.ai.agents.compare import build_rule_comparison
+from app.modules.ai.agents.discover import build_rule_picks
+from app.modules.ai.agents.tracker import build_rule_summary
 
 INTENT = re.compile(r"\b(want to|wants to|hope to|plan to|planning|apply|applying|pursue|pursuing|seeking|looking to)\b", re.I)
 FIELD = re.compile(
@@ -89,6 +93,11 @@ HANDLERS = {
     "profile_extract": _profile,
     "eligibility_explain": _explain,
     "strategy_plan": build_rule_plan,
+    "opportunity_discover": build_rule_picks,
+    "opportunity_compare": build_rule_comparison,
+    "application_checklist": build_rule_checklist,
+    "draft_review": build_rule_review,
+    "progress_summary": build_rule_summary,
 }
 
 

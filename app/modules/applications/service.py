@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
@@ -276,3 +276,16 @@ def stats(db: Session, user: User) -> dict:
 
 def tracked_opportunity_ids(db: Session, user: User) -> set[uuid.UUID]:
     return set(db.scalars(select(Application.opportunity_id).where(Application.user_id == user.id)).all())
+
+def recent_status_changes(db: Session, user: User, days: int) -> int:
+    since = _now() - timedelta(days=days)
+    return db.scalar(
+        select(func.count())
+        .select_from(ApplicationEvent)
+        .join(Application, ApplicationEvent.application_id == Application.id)
+        .where(
+            Application.user_id == user.id,
+            ApplicationEvent.occurred_at >= since,
+            ApplicationEvent.from_status.is_not(None),  # skip the "started tracking" event
+        )
+    )

@@ -1,8 +1,10 @@
 import uuid
 from datetime import datetime
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator
+
+from app.modules.opportunities.schemas import Category
 
 
 class ExtractRequest(BaseModel):
@@ -102,3 +104,47 @@ class GuidanceRequest(BaseModel):
 
     opportunity_id: uuid.UUID
     force: bool = False
+
+class DiscoverRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    category: Category | None = None
+    q: Annotated[str, StringConstraints(strip_whitespace=True, max_length=100)] | None = None
+    limit: int = Field(default=5, ge=1, le=10)
+
+
+class CompareRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    opportunity_ids: list[uuid.UUID] = Field(min_length=2, max_length=4)
+
+    @field_validator("opportunity_ids")
+    @classmethod
+    def unique(cls, v):
+        if len(set(v)) != len(v):
+            raise ValueError("opportunity_ids must be unique")
+        return v
+
+
+class ReviewRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    text: Annotated[str, StringConstraints(strip_whitespace=True, min_length=50, max_length=8000)]
+    kind: Literal["personal_statement", "cv", "cover_letter", "other"] = "other"
+
+
+class ProgressRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    notify: bool = False  # also post the summary as an in-app notification
+
+
+class ChecklistApplyRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    items: list[Annotated[int, Field(ge=0)]] | None = Field(default=None, max_length=15)
+
+
+class ChecklistApplyOut(BaseModel):
+    added: list[str]
+    skipped: list[str]

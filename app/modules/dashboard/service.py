@@ -11,6 +11,7 @@ from app.modules.goals import service as goals_service
 from app.modules.matching import service as matching_service
 from app.modules.notifications import service as notifications_service
 from app.modules.profiles import service as profiles_service
+from app.modules.strategy import tasks as strategy_tasks
 
 CATEGORIES = ("admission", "scholarship", "internship", "job")
 TOP_PER_CATEGORY = 3
@@ -97,6 +98,11 @@ def build_dashboard(db: Session, user: User) -> dict:
         and (a["deadline_at"] - now).days <= UPCOMING_WINDOW_DAYS
     ][:MAX_UPCOMING]
 
+    overview = strategy_tasks.task_overview(db, user, now.date())
+    urgent_tasks = [
+        {"id": t["id"], "title": t["title"], "due_date": t["due_date"], "opportunity": t["opportunity"]}
+        for t in overview["overdue"] + overview["due_soon"]
+    ]
     last_computed = matching_service.last_computed_at(db, user)
     actions = actions_module.next_actions(
         {
@@ -106,6 +112,7 @@ def build_dashboard(db: Session, user: User) -> dict:
             "matches_last_computed_at": last_computed,
             "matches": flat,
             "applications": app_rows,
+            "tasks": urgent_tasks,
         },
         now,
     )
@@ -137,6 +144,8 @@ def build_dashboard(db: Session, user: User) -> dict:
             "offers": stats["offers_ever"],
             "note": PROGRESS_NOTE,
         },
+        "plan_tasks": {"open": overview["open"], "done": overview["done"],
+                        "overdue": len(overview["overdue"]), "due_soon": len(overview["due_soon"])},
         "unread_notifications": notifications_service.unread_count(db, user),
         "next_actions": actions,
     }
