@@ -16,7 +16,12 @@ services:
     image: redis:7
 
   api:
-    build: .
+    build:
+      context: .
+      args:
+        INSTALL_DEV: "true"
+    user: "0" # development runs as root so files written by Alembic belong to you
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     env_file: .env
     environment:
       WATCHFILES_FORCE_POLLING: "true"

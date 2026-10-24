@@ -1,8 +1,10 @@
 import os
 
 # Force the test database, even if .env points at the dev one.
-os.environ["DATABASE_URL"] = "postgresql+psycopg://compass:compass@db:5432/compass_test"
-os.environ["REDIS_URL"] = "redis://redis:6379/1"  # database 1, so tests never touch dev data
+os.environ["DATABASE_URL"] = os.environ.get(
+    "TEST_DATABASE_URL", "postgresql+psycopg://compass:compass@db:5432/compass_test"
+)
+os.environ["REDIS_URL"] = os.environ.get("TEST_REDIS_URL", "redis://redis:6379/1")
 os.environ["RATE_LIMIT_ENABLED"] = "false"  # only the tests that check limits turn it on
 os.environ["ENV"] = "development"
 os.environ["EMAIL_BACKEND"] = "memory"

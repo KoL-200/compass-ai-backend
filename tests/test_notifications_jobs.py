@@ -216,7 +216,7 @@ def test_internal_job_endpoint(client, monkeypatch):
 
     ok = client.post(url, headers=good)
     assert ok.status_code == 200, ok.text
-    assert set(ok.json()) == {"expire-applications", "scan-deadlines"}
+    assert set(ok.json()) == {"expire-applications", "scan-deadlines", "ai-cleanup"}
     assert ok.json()["expire-applications"]["expired"] == 0
 
     single = client.post("/internal/jobs/scan-deadlines", headers=good).json()
@@ -229,7 +229,7 @@ def test_internal_job_endpoint(client, monkeypatch):
 
 
 def test_enqueue_runs_inline_and_rejects_unknown_backends(monkeypatch):
-    assert set(enqueue("daily")) == {"expire-applications", "scan-deadlines"}
+    assert set(enqueue("daily")) == {"expire-applications", "scan-deadlines", "ai-cleanup"}
     assert run_job("expire-applications")["expired"] == 0
     monkeypatch.setattr(get_settings(), "job_backend", "celery")
     with pytest.raises(RuntimeError):

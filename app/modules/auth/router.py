@@ -189,7 +189,8 @@ placeholder_router = APIRouter(include_in_schema=False)
 
 @placeholder_router.get("/oauth-placeholder", response_class=HTMLResponse)
 def oauth_placeholder(code: str | None = None, error: str | None = None):
-    if get_settings().env != "development":
+    settings = get_settings()
+    if settings.env != "development" and not settings.allow_oauth_placeholder:
         raise AppError(404, "not_found", "Not found")
     if code:
         body = (

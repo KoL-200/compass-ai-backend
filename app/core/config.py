@@ -1,5 +1,5 @@
 from functools import lru_cache
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -42,6 +42,18 @@ class Settings(BaseSettings):
     ai_retry_backoff_seconds: float = 1.0
     ai_daily_run_limit: int = 30
     ai_max_parallel_steps: int = 4
+    cors_origins: str = ""  # comma-separated exact origins, e.g. https://app.example.com
+    docs_enabled: bool = True
+    allow_oauth_placeholder: bool = False  # demo only: keeps /oauth-placeholder alive in production
+
+    @field_validator("database_url")
+    @classmethod
+    def use_the_psycopg_driver(cls, v: str) -> str:
+        """Lets you paste a provider's plain postgres:// or postgresql:// string."""
+        for prefix in ("postgres://", "postgresql://"):
+            if v.startswith(prefix):
+                return "postgresql+psycopg://" + v[len(prefix):]
+        return v
 
 
 @lru_cache

@@ -7,7 +7,5 @@ pydantic-settings
 argon2-cffi
 pyjwt
 email-validator
-pytest
-httpx
-ruff
 redis
+httpx

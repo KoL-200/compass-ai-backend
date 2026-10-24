@@ -10,6 +10,13 @@ from app.modules.applications.transitions import PRE_SUBMISSION
 from app.modules.notifications import reminders, service
 from app.modules.opportunities.models import Opportunity
 
+import logging
+
+from app.core.errors import AppError
+from app.modules.ai.jobs import cleanup as ai_cleanup  # also registers the ai-cleanup job
+
+log = logging.getLogger(__name__)
+
 BATCH = 500
 HORIZON_DAYS = 91  # reminder_days can be at most 90
 
@@ -131,5 +138,18 @@ def run_scan() -> dict:
 
 @job("daily")
 def run_daily() -> dict:
-    # Expire first, so an application whose deadline passed never gets a reminder.
-    return {"expire-applications": run_expire(), "scan-deadlines": run_scan()}
+    """Runs every step even if one fails, then reports. Expire first, so a lapsed deadline gets no reminder."""
+    report, failed = {}, []
+    for name, step in (
+        ("expire-applications", run_expire),
+        ("scan-deadlines", run_scan),
+        ("ai-cleanup", ai_cleanup),
+    ):
+        try:
+            report[name] = step()
+        except Exception:
+            log.exception("Daily job step '%s' failed", name)
+            failed.append(name)
+    if failed:
+        raise AppError(500, "job_failed", "One or more daily jobs failed. See the logs.", failed)
+    return report

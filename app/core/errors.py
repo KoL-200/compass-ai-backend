@@ -3,6 +3,12 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
+import logging
+
+from app.core.logging import request_id_var
+
+log = logging.getLogger("app.errors")
+
 
 class AppError(Exception):
     def __init__(self, status_code: int, code: str, message: str, details=None, headers=None):
@@ -33,4 +39,13 @@ def register_error_handlers(app: FastAPI) -> None:
                     "details": jsonable_encoder(exc.errors()),
                 }
             },
+        )
+
+    @app.exception_handler(Exception)
+    async def unhandled_error_handler(request: Request, exc: Exception):
+        log.exception("Unhandled error")  # the details go to the log, never to the client
+        return JSONResponse(
+            status_code=500,
+            content={"error": {"code": "internal_error", "message": "Something went wrong on our side.",
+                               "details": [], "request_id": request_id_var.get()}},
         )

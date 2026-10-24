@@ -1,0 +1,21 @@
+name: Daily jobs
+
+on:
+  schedule:
+    - cron: "15 3 * * *"   # 03:15 UTC every day. GitHub may start it a few minutes late.
+  workflow_dispatch:        # lets you run it by hand from the Actions tab
+
+permissions: {}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run reminders, expiry and cleanup
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          JOB_SECRET: ${{ secrets.JOB_SECRET }}
+        run: |
+          curl --fail-with-body --silent --show-error \
+            --retry 5 --retry-delay 30 --retry-all-errors --max-time 120 \
+            -X POST -H "X-Job-Secret: $JOB_SECRET" "$APP_URL/internal/jobs/daily"
