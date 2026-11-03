@@ -34,8 +34,9 @@ class Settings(BaseSettings):
     resend_api_key: str = ""
     frontend_base_url: str = "http://localhost:3000"
     require_verified_email: bool = False
-    ai_provider: str = "mock"
-    ai_model: str = "mock-1"
+    ai_provider: str = "openai"
+    ai_model: str = "gpt-4o-mini"
+    openai_api_key: str = ""
     ai_timeout_seconds: int = 30
     ai_run_timeout_seconds: int = 120
     ai_max_retries: int = 2

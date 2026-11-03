@@ -10,6 +10,7 @@ from app.core.db import Base
 import app.modules.auth.models 
 import app.modules.profiles.models 
 import app.modules.opportunities.models 
+import app.modules.eligibility.models  # noqa: F401
 import app.modules.matching.models
 import app.modules.applications.models
 import app.modules.notifications.models

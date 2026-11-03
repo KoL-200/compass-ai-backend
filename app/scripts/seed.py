@@ -1,8 +1,8 @@
 """Load organizations, sources and opportunities from a JSON file.
 
 Usage:
-    python -m app.scripts.seed data/seed_sample.json
-    python -m app.scripts.seed data/seed_sample.json --verify-demo   (demo records only)
+    python -m app.scripts.seed data/seed_sources.json
+    python -m app.scripts.seed <file.json> --verify-demo   (records marked demo only)
 """
 import json
 import sys

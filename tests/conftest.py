@@ -10,6 +10,8 @@ os.environ["ENV"] = "development"
 os.environ["EMAIL_BACKEND"] = "memory"
 os.environ["JOB_SECRET"] = "test-job-secret-not-for-production"
 os.environ["AI_RETRY_BACKOFF_SECONDS"] = "0"
+os.environ["AI_PROVIDER"] = "mock"
+os.environ["AI_MODEL"] = "mock-1"
 os.environ.setdefault("JWT_SECRET", "test-secret-not-for-production-use-1234")
 
 import pytest

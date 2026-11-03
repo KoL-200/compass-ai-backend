@@ -9,7 +9,11 @@ AI layer). FastAPI, PostgreSQL, SQLAlchemy, Alembic.
     cp .env.example .env          # Windows: copy .env.example .env
     docker compose up --build     # API on http://localhost:8000, docs at /docs
     docker compose run --rm api alembic upgrade head
-    docker compose run --rm api python -m app.scripts.seed data/seed_sample.json --verify-demo
+    docker compose run --rm api python -m app.scripts.seed data/seed_sources.json
+
+  The source catalog registers candidate URLs only. Crawl a bounded number of catalog sources with
+  `docker compose run --rm api python -m app.scripts.crawl_sources --limit 5`; candidates are written
+  to `data/crawl_candidates.json` for human review and are never published automatically.
 
 Create the test database once, then run the tests:
 
@@ -32,7 +36,7 @@ All settings are environment variables (see `.env.example`). In production
 | `PUBLIC_BASE_URL`, `FRONTEND_CALLBACK_URL` | Used to build OAuth callbacks and redirects |
 | `GOOGLE_*`, `GITHUB_*` | OAuth client IDs and secrets (optional) |
 | `EMAIL_BACKEND` | `console` (dev), `smtp`, `resend`, `memory` (tests) |
-| `AI_PROVIDER` | `mock` for now; see "AI layer" |
+| `AI_PROVIDER`, `AI_MODEL`, `OPENAI_API_KEY` | OpenAI-backed AI assistance; `mock` remains available for tests and offline development |
 | `CORS_ORIGINS` | Comma-separated exact origins; empty disables CORS |
 | `DOCS_ENABLED`, `ALLOW_OAUTH_PLACEHOLDER` | Demo conveniences; turn off for real use |
 
@@ -67,8 +71,11 @@ skills-gap and career-path logic, and the AI output checks.
 
 ## AI layer
 
-`AI_PROVIDER=mock` is a deterministic stand-in (keyword rules and templates), not a language model.
-To add a real provider, implement a class with `name` and `complete(request)` in
+`AI_PROVIDER=openai` uses the OpenAI Chat Completions API. Set `OPENAI_API_KEY` and `AI_MODEL` in
+`.env`; `.env.example` includes a key placeholder. Set `AI_PROVIDER=mock` for the deterministic
+keyword-and-template provider used by tests and offline development. Model output is still validated
+and grounded by the application before use.
+To add another provider, implement a class with `name` and `complete(request)` in
 `app/modules/ai/llm.py`, add it to `get_provider()` and its prices to `PRICES_PER_MILLION`.
 User text (profile statements, drafts) is sent to the provider; no names, emails or account data.
 

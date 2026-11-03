@@ -1,17 +1,105 @@
 import json
 import time
 
+import httpx
 import pytest
 
 from app.core.config import get_settings
-from app.modules.ai import llm
+from app.modules.ai import llm, openai_provider
 from app.modules.ai.agents.explain import EXPLAIN_AGENT
 from app.modules.ai.agents.profile import PROFILE_AGENT, ProfileProposal, ground as ground_profile
 from app.modules.ai.explain_text import build_explanation
-from app.modules.ai.llm import ProviderError
+from app.modules.ai.llm import LLMRequest, ProviderError
 from app.modules.ai.mock_provider import MockProvider
 from app.modules.ai.orchestrator import AgentFailed, Cancelled, run_agent
 from tests.ai_helpers import SAMPLE_TEXT, ScriptedProvider, explain_payload, explanation
+
+
+def _llm_request() -> LLMRequest:
+    return LLMRequest(
+        task="test_task",
+        system="Return JSON.",
+        user="Say hello.",
+        json_schema={"type": "object", "properties": {"answer": {"type": "string"}}},
+        payload={},
+    )
+
+
+def test_openai_provider_sends_json_request_and_parses_usage(monkeypatch):
+    settings = get_settings()
+    monkeypatch.setattr(settings, "openai_api_key", "sk-test")
+    monkeypatch.setattr(settings, "ai_model", "gpt-4o-mini")
+    monkeypatch.setattr(settings, "ai_provider", "openai")
+    captured = {}
+
+    def respond(http_request):
+        captured["authorization"] = http_request.headers["Authorization"]
+        captured["body"] = json.loads(http_request.content)
+        return httpx.Response(
+            200,
+            json={
+                "model": "gpt-4o-mini",
+                "choices": [{"message": {"content": '{"answer":"hello"}'}}],
+                "usage": {"prompt_tokens": 12, "completion_tokens": 4},
+            },
+        )
+
+    monkeypatch.setattr(
+        openai_provider,
+        "_http",
+        lambda timeout: httpx.Client(transport=httpx.MockTransport(respond), timeout=timeout),
+    )
+    result = llm.get_provider().complete(_llm_request())
+
+    assert captured["authorization"] == "Bearer sk-test"
+    assert captured["body"]["model"] == "gpt-4o-mini"
+    assert captured["body"]["response_format"] == {"type": "json_object"}
+    assert "Output JSON matching this schema" in captured["body"]["messages"][0]["content"]
+    assert (result.text, result.tokens_in, result.tokens_out, result.model) == (
+        '{"answer":"hello"}', 12, 4, "gpt-4o-mini"
+    )
+
+
+def test_openai_provider_retries_rate_limits(monkeypatch):
+    monkeypatch.setattr(get_settings(), "openai_api_key", "sk-test")
+    monkeypatch.setattr(
+        openai_provider,
+        "_http",
+        lambda timeout: httpx.Client(
+            transport=httpx.MockTransport(lambda request: httpx.Response(429)), timeout=timeout
+        ),
+    )
+
+    with pytest.raises(ProviderError) as exc:
+        openai_provider.OpenAIProvider().complete(_llm_request())
+    assert exc.value.retryable is True
+
+
+def test_openai_provider_does_not_retry_exhausted_quota(monkeypatch):
+    monkeypatch.setattr(get_settings(), "openai_api_key", "sk-test")
+    monkeypatch.setattr(
+        openai_provider,
+        "_http",
+        lambda timeout: httpx.Client(
+            transport=httpx.MockTransport(
+                lambda request: httpx.Response(
+                    429,
+                    json={"error": {"type": "insufficient_quota", "code": "credit_balance_exhausted"}},
+                )
+            ),
+            timeout=timeout,
+        ),
+    )
+
+    with pytest.raises(ProviderError) as exc:
+        openai_provider.OpenAIProvider().complete(_llm_request())
+    assert exc.value.retryable is False
+
+
+def test_openai_provider_rejects_placeholder_key(monkeypatch):
+    monkeypatch.setattr(get_settings(), "openai_api_key", "your-openai-api-key-here")
+    with pytest.raises(ProviderError, match="OPENAI_API_KEY is not configured"):
+        openai_provider.OpenAIProvider()
 
 
 @pytest.fixture(autouse=True)

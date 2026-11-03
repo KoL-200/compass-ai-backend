@@ -1,0 +1,250 @@
+{
+    "organizations":  [
+
+                      ],
+    "sources":  [
+                    {
+                        "key":  "admissions-jamb",
+                        "name":  "University Admissions: JAMB",
+                        "url":  "https://www.jamb.gov.ng/",
+                        "type":  "official_portal"
+                    },
+                    {
+                        "key":  "scholarships-ofas",
+                        "name":  "Scholarships and Education Funding: Opportunities for Africans",
+                        "url":  "https://www.opportunitiesforafricans.com/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "jobs-jobberman",
+                        "name":  "Nigerian Jobs: Jobberman",
+                        "url":  "https://www.jobberman.com/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "jobs-myjobmag",
+                        "name":  "Nigerian Jobs: MyJobMag",
+                        "url":  "https://www.myjobmag.com/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "jobs-hotnigerianjobs",
+                        "name":  "Nigerian Jobs: Hot Nigerian Jobs",
+                        "url":  "https://www.hotnigerianjobs.com/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "jobs-indeed-ng",
+                        "name":  "Nigerian Jobs: Indeed Nigeria",
+                        "url":  "https://ng.indeed.com/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "jobs-careerjet-ng",
+                        "name":  "Nigerian Jobs: Careerjet Nigeria",
+                        "url":  "https://www.careerjet.com.ng/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "remote-wellfound",
+                        "name":  "International and Remote Jobs: Wellfound",
+                        "url":  "https://wellfound.com/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "remote-remoteok",
+                        "name":  "International and Remote Jobs: Remote OK",
+                        "url":  "https://remoteok.com/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "remote-weworkremotely",
+                        "name":  "International and Remote Jobs: We Work Remotely",
+                        "url":  "https://weworkremotely.com/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "remote-remotive",
+                        "name":  "International and Remote Jobs: Remotive",
+                        "url":  "https://remotive.com/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "remote-remoteco",
+                        "name":  "International and Remote Jobs: Remote.co",
+                        "url":  "https://www.remote.co/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "scholarships-afterschoolafrica",
+                        "name":  "Scholarships and Education Funding: After School Africa",
+                        "url":  "https://www.afterschoolafrica.com/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "scholarships-scholarshipportal",
+                        "name":  "Scholarships and Education Funding: ScholarshipPortal",
+                        "url":  "https://www.scholarshipportal.com/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "scholarships-scholars4dev",
+                        "name":  "Scholarships and Education Funding: Scholars4Dev",
+                        "url":  "https://www.scholars4dev.com/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "scholarships-scholarshipsads",
+                        "name":  "Scholarships and Education Funding: ScholarshipsAds",
+                        "url":  "https://www.scholarshipsads.com/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "admissions-nuc",
+                        "name":  "University Admissions: National Universities Commission",
+                        "url":  "https://www.nuc.edu.ng/",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "admissions-funaab",
+                        "name":  "University Admissions: FUNAAB",
+                        "url":  "https://www.funaab.edu.ng/",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "admissions-ui",
+                        "name":  "University Admissions: University of Ibadan",
+                        "url":  "https://www.ui.edu.ng/",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "admissions-unilag",
+                        "name":  "University Admissions: University of Lagos",
+                        "url":  "https://www.unilag.edu.ng/",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "internships-forage",
+                        "name":  "Internships and Graduate Programmes: Forage",
+                        "url":  "https://www.theforage.com/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "internships-amazon",
+                        "name":  "Internships and Graduate Programmes: Amazon Jobs",
+                        "url":  "https://www.amazon.jobs/",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "internships-microsoft",
+                        "name":  "Internships and Graduate Programmes: Microsoft Careers",
+                        "url":  "https://careers.microsoft.com/",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "internships-ibm",
+                        "name":  "Internships and Graduate Programmes: IBM Careers",
+                        "url":  "https://www.ibm.com/careers",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "internships-afdb",
+                        "name":  "Internships and Graduate Programmes: African Development Bank Careers",
+                        "url":  "https://www.afdb.org/en/about-us/careers",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "funding-f6s",
+                        "name":  "Grants and Fellowships: F6S",
+                        "url":  "https://www.f6s.com/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "funding-globalinnovationfund",
+                        "name":  "Grants and Fellowships: Global Innovation Fund",
+                        "url":  "https://www.globalinnovation.fund/",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "funding-youthop",
+                        "name":  "Grants and Fellowships: Youth Opportunities",
+                        "url":  "https://www.youthop.com/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "funding-devex",
+                        "name":  "Grants and Fellowships: Devex",
+                        "url":  "https://www.devex.com/",
+                        "type":  "aggregator"
+                    },
+                    {
+                        "key":  "funding-unesco",
+                        "name":  "Grants and Fellowships: UNESCO",
+                        "url":  "https://www.unesco.org/",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "techjobs-openai",
+                        "name":  "Technology and AI Jobs: OpenAI Careers",
+                        "url":  "https://openai.com/careers",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "techjobs-anthropic",
+                        "name":  "Technology and AI Jobs: Anthropic Careers",
+                        "url":  "https://www.anthropic.com/careers",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "techjobs-cloudflare",
+                        "name":  "Technology and AI Jobs: Cloudflare Careers",
+                        "url":  "https://www.cloudflare.com/careers",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "techjobs-vercel",
+                        "name":  "Technology and AI Jobs: Vercel Careers",
+                        "url":  "https://vercel.com/careers",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "techjobs-nvidia",
+                        "name":  "Technology and AI Jobs: NVIDIA Careers",
+                        "url":  "https://www.nvidia.com/en-us/about-nvidia/careers",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "training-coursera",
+                        "name":  "Training and Certifications: Coursera",
+                        "url":  "https://www.coursera.org/",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "training-edx",
+                        "name":  "Training and Certifications: edX",
+                        "url":  "https://www.edx.org/",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "training-ibmskillsbuild",
+                        "name":  "Training and Certifications: IBM SkillsBuild",
+                        "url":  "https://skillsbuild.org/",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "training-microsoftlearn",
+                        "name":  "Training and Certifications: Microsoft Learn",
+                        "url":  "https://learn.microsoft.com/",
+                        "type":  "official_website"
+                    },
+                    {
+                        "key":  "training-netacad",
+                        "name":  "Training and Certifications: Cisco Networking Academy",
+                        "url":  "https://www.netacad.com/",
+                        "type":  "official_website"
+                    }
+                ],
+    "opportunities":  [
+
+                      ]
+}

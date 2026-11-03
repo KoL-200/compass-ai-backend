@@ -56,4 +56,8 @@ def get_provider() -> Provider:
         from app.modules.ai.mock_provider import MockProvider
 
         return MockProvider()
+    if name == "openai":
+        from app.modules.ai.openai_provider import OpenAIProvider
+
+        return OpenAIProvider()
     raise ProviderError(f"Unknown AI provider '{name}'")
